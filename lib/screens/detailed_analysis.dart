@@ -27,19 +27,23 @@ class _DetailedAnalysisScreenState extends State<DetailedAnalysisScreen> {
       barColor: charts.ColorUtil.fromDartColor(Color(0xffFF7300)),
     ),
     SubscriberSeries(
-      percentage: "45",
+      percentageText: "25",
+      percent: 25,
       barColor: charts.ColorUtil.fromDartColor(Color(0xff27B6F4)),
     ),
     SubscriberSeries(
-      percentage: "30",
+      percentageText: "35",
+      percent: 35,
       barColor: charts.ColorUtil.fromDartColor(Color(0xff27B6F4)),
     ),
     SubscriberSeries(
-      percentage: "15",
+      percentageText: "45",
+      percent: 45,
       barColor: charts.ColorUtil.fromDartColor(Color(0xffEA4970)),
     ),
     SubscriberSeries(
-      percentage: "15",
+      percentageText: "55",
+      percent: 55,
       barColor: charts.ColorUtil.fromDartColor(Color(0xff1E7B9B)),
     ),
   ];
