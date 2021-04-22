@@ -1,20 +1,53 @@
-
 import 'package:bloom/screens/detailed_analysis.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+
+
 class ResultScreen extends StatefulWidget {
+  dynamic results;
+  ResultScreen(this.results);
   @override
   _ResultScreenState createState() => _ResultScreenState();
 }
 
-class _ResultScreenState extends State<ResultScreen> {
-  int touchedIndex;
+dynamic performCalculations(dynamic results) {
+  dynamic file = results["file"];
+  dynamic pieData = List.filled(7, 0);
+  int len = file.length;
+  for(int i=0;i<len;i++){
+    var maxx = 0.0;
+    var pos = -1;
+    for(int j=0;j<6;j++){
+      if(file[i][j] > maxx){maxx=file[i][j];pos=j;}
+    }
+    if(maxx>=50){pieData[pos]++;}
+    else pieData[6]++;
+  }
+  print("The lenght of the array is $len");
+  print(pieData);
+  return pieData;
+}
 
+int countQues(dynamic results){
+  dynamic file = results["file"];
+  return file.length;
+}
+
+class _ResultScreenState extends State<ResultScreen> {
+  dynamic pieData = new List(7);
+  int totQuestions;
+  @override
+  void initState() {
+    super.initState();
+    pieData = performCalculations(widget.results);
+    totQuestions = countQues(widget.results);
+  }
+  int touchedIndex;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,7 +104,7 @@ class _ResultScreenState extends State<ResultScreen> {
                         ),
                         sectionsSpace: 0,
                         centerSpaceRadius: 40,
-                        sections: showingSections()),
+                        sections: showingSections(pieData, totQuestions)),
                   ),
                 ),
               ),
@@ -90,7 +123,7 @@ class _ResultScreenState extends State<ResultScreen> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
                 child: Text(
-                  "• Total number of questions: 56",
+                  "• Total number of questions: $totQuestions",
                   textAlign: TextAlign.center,
                   style: GoogleFonts.poppins(
                       color: Color(0xff352661), fontSize: 18),
@@ -101,7 +134,7 @@ class _ResultScreenState extends State<ResultScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => DetailedAnalysisScreen(),
+                      builder: (context) => DetailedAnalysisScreen(widget.results),
                     ),
                   );
                 },
@@ -150,17 +183,17 @@ class _ResultScreenState extends State<ResultScreen> {
     );
   }
 
-  List<PieChartSectionData> showingSections() {
-    return List.generate(4, (i) {
+  List<PieChartSectionData> showingSections(dynamic pieData, dynamic total) {
+    return List.generate(7, (i) {
       final isTouched = i == touchedIndex;
-      final double fontSize = isTouched ? 25 : 16;
+      final double fontSize = isTouched ? 25 : 13;
       final double radius = isTouched ? 60 : 50;
       switch (i) {
         case 0:
           return PieChartSectionData(
             color: const Color(0xff0293ee),
-            value: 40,
-            title: '40%',
+            value: pieData[0]/total*100 != 0.0 ? pieData[0]/total*100: 0.1,
+            title: pieData[0]/total*100 != 0.0 ? ((pieData[0]/total*100).round().toString() + "%\nKnowledge"): (""),
             radius: radius,
             titleStyle: TextStyle(
                 fontSize: fontSize,
@@ -170,8 +203,8 @@ class _ResultScreenState extends State<ResultScreen> {
         case 1:
           return PieChartSectionData(
             color: const Color(0xfff8b250),
-            value: 30,
-            title: '30%',
+            value: pieData[1]/total*100 != 0.0 ? pieData[1]/total*100: 0.1,
+            title: pieData[1]/total*100 != 0.0 ? ((pieData[1]/total*100).round().toString() + "%\nComprehension"): (""),
             radius: radius,
             titleStyle: TextStyle(
                 fontSize: fontSize,
@@ -181,8 +214,8 @@ class _ResultScreenState extends State<ResultScreen> {
         case 2:
           return PieChartSectionData(
             color: const Color(0xff845bef),
-            value: 15,
-            title: '15%',
+            value: pieData[2]/total*100 != 0.0 ? pieData[2]/total*100: 0.1,
+            title: pieData[2]/total*100 != 0.0 ? ((pieData[2]/total*100).round().toString() + "%\nApplication"): (""),
             radius: radius,
             titleStyle: TextStyle(
                 fontSize: fontSize,
@@ -192,8 +225,41 @@ class _ResultScreenState extends State<ResultScreen> {
         case 3:
           return PieChartSectionData(
             color: const Color(0xff13d38e),
-            value: 15,
-            title: '15%',
+            value: pieData[3]/total*100 != 0.0 ? pieData[3]/total*100: 0.1,
+            title: pieData[3]/total*100 != 0.0 ? ((pieData[3]/total*100).round().toString() + "%\nAnalysis"): (""),
+            radius: radius,
+            titleStyle: TextStyle(
+                fontSize: fontSize,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xffffffff)),
+          );
+          case 4:
+          return PieChartSectionData(
+            color: const Color(0xffeb3434),
+            value: pieData[4]/total*100 != 0.0 ? pieData[4]/total*100: 0.1,
+            title: pieData[4]/total*100 != 0.0 ? ((pieData[4]/total*100).round().toString() + "%\nAnalysis"): (""),
+            radius: radius,
+            titleStyle: TextStyle(
+                fontSize: fontSize,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xffffffff)),
+          );
+          case 5:
+          return PieChartSectionData(
+            color: const Color(0xffdfeb34),
+            value: pieData[5]/total*100 != 0.0 ? pieData[5]/total*100: 0.1,
+            title: pieData[5]/total*100 != 0.0 ? ((pieData[5]/total*100).round().toString() + "%\nSynthesis"): (""),
+            radius: radius,
+            titleStyle: TextStyle(
+                fontSize: fontSize,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xffffffff)),
+          );
+          case 6:
+          return PieChartSectionData(
+            color: const Color(0xffdfeb34),
+            value: pieData[6]/total*100 != 0.0 ? pieData[6]/total*100: 0.1,
+            title: pieData[6]/total*100 != 0.0 ? ((pieData[6]/total*100).round().toString() + "%\nEvaluation"): (""),
             radius: radius,
             titleStyle: TextStyle(
                 fontSize: fontSize,

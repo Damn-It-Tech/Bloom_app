@@ -1,53 +1,45 @@
 import 'package:bloom/bar_graph/chart.dart';
-import 'package:bloom/models/bar_chart_model.dart';
-import 'package:bloom/screens/add_file_screen.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:charts_flutter/flutter.dart' as charts;
 
 class DetailedAnalysisScreen extends StatefulWidget {
+  dynamic results;
+  DetailedAnalysisScreen(this.results);
   @override
   _DetailedAnalysisScreenState createState() => _DetailedAnalysisScreenState();
 }
 
+dynamic countQues(dynamic results){
+  dynamic file = results["file"];
+  return file.length;
+}
+
+List<dynamic> getData (dynamic results, int selected) {
+  dynamic list = results['file'];
+  selected--;
+  print("List for selected: $selected : ");
+  print(list[selected]);
+  List<dynamic> data = [
+    list[selected][0].roundToDouble(),
+    list[selected][1].roundToDouble(),
+    list[selected][2].roundToDouble(),
+    list[selected][3].roundToDouble(),
+    list[selected][4].roundToDouble(),
+    list[selected][5].roundToDouble()
+  ];
+  print(data);
+  return data;
+}
+
 class _DetailedAnalysisScreenState extends State<DetailedAnalysisScreen> {
   int selected = 1;
-  final List<SubscriberSeries> data = [
-    SubscriberSeries(
-      percentageText: "15",
-      percent: 15,
-      barColor: charts.ColorUtil.fromDartColor(Color(0xffFFBF00)),
-    ),
-    SubscriberSeries(
-      percentageText: "5",
-      percent: 5,
-      barColor: charts.ColorUtil.fromDartColor(Color(0xffFF7300)),
-    ),
-    SubscriberSeries(
-      percentageText: "25",
-      percent: 25,
-      barColor: charts.ColorUtil.fromDartColor(Color(0xff27B6F4)),
-    ),
-    SubscriberSeries(
-      percentageText: "35",
-      percent: 35,
-      barColor: charts.ColorUtil.fromDartColor(Color(0xff27B6F4)),
-    ),
-    SubscriberSeries(
-      percentageText: "45",
-      percent: 45,
-      barColor: charts.ColorUtil.fromDartColor(Color(0xffEA4970)),
-    ),
-    SubscriberSeries(
-      percentageText: "55",
-      percent: 55,
-      barColor: charts.ColorUtil.fromDartColor(Color(0xff1E7B9B)),
-    ),
-  ];
+  dynamic totQues;
   @override
+  void initState() {
+    super.initState();
+    totQues = countQues(widget.results);
+  }
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
@@ -77,6 +69,7 @@ class _DetailedAnalysisScreenState extends State<DetailedAnalysisScreen> {
                                   color: Color(0xff352661), fontSize: 25)),
                         ),
                       ],
+                      
                     ),
                   ),
                   SizedBox(height: 50),
@@ -85,8 +78,8 @@ class _DetailedAnalysisScreenState extends State<DetailedAnalysisScreen> {
                     padding: EdgeInsets.symmetric(horizontal: 20),
                     child: GridView.count(
                       scrollDirection: Axis.horizontal,
-                      crossAxisCount: 5,
-                      children: List.generate(50, (index) {
+                      crossAxisCount: 4,
+                      children: List.generate(totQues, (index) {
                         return GestureDetector(
                           onTap: () {
                             setState(() {
@@ -121,10 +114,11 @@ class _DetailedAnalysisScreenState extends State<DetailedAnalysisScreen> {
                   //   child:
                   // ),
                   Container(
-                      child: SubscriberChart(
-                    data: data,
-                    selected: selected,
-                  )),
+                    child: SubscriberChart(
+                      data: getData(widget.results, selected),
+                      selected: selected,
+                    )
+                  ),
                   SizedBox(height: 90)
                 ],
               ),

@@ -33,6 +33,8 @@ class _AddFileScreenState extends State<AddFileScreen> {
     }
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,7 +76,7 @@ class _AddFileScreenState extends State<AddFileScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => ViewPdfScreen(file.name)),
+                                builder: (context) => ViewPdfScreen(file)),
                           );
                         }
                       },

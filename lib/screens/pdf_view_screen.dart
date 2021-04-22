@@ -1,13 +1,34 @@
+import 'dart:async';
+
 import 'package:bloom/screens/result_screen.dart';
+import 'package:dio/dio.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+
 class ViewPdfScreen extends StatefulWidget {
-  final String fileName;
-  ViewPdfScreen(this.fileName);
+  PlatformFile file;
+  ViewPdfScreen(this.file);
   @override
   _ViewPdfScreenState createState() => _ViewPdfScreenState();
+}
+
+Future<dynamic> getResults(PlatformFile pdfFile) async{
+
+  Dio dio = new Dio();
+  MultipartFile multipat = await MultipartFile.fromFile(pdfFile.path, filename: pdfFile.name);
+
+  FormData formData = new FormData.fromMap({"myfile": multipat,});
+
+  Response response = await dio.post("http://10.0.2.2:8000/uploadFile",data: formData);
+  if(response.statusCode == 200){
+    return response.data;
+  }
+  else{
+    return null;
+  }
 }
 
 class _ViewPdfScreenState extends State<ViewPdfScreen> {
@@ -51,7 +72,7 @@ class _ViewPdfScreenState extends State<ViewPdfScreen> {
                     border: Border.all(color: Color(0xff352661))),
                 child: Center(
                   child: Text(
-                    widget.fileName,
+                    widget.file.name,
                     style: GoogleFonts.poppins(
                         color: Color(0xff352661), fontSize: 18),
                   ),
@@ -68,11 +89,12 @@ class _ViewPdfScreenState extends State<ViewPdfScreen> {
                 ),
               ),
               GestureDetector(
-                onTap: () {
+                onTap: () async {
+                  final dynamic results = await getResults(widget.file);
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ResultScreen(),
+                      builder: (context) => ResultScreen(results),
                     ),
                   );
                 },
